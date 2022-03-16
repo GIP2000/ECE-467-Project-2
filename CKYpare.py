@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from functools import reduce
 from collections import defaultdict
 from nltk.tokenize import word_tokenize
 from nltk import download as n_download
@@ -46,12 +45,14 @@ class Table:
             self.table[i][i] = grammer.terminal[word]
 
         # loop through diagonals and populate non_terminals 
-        for gsdx in range(1,self.wc): 
-            for sdy in range(0,self.wc-gsdx):
-                sdx = gsdx+sdy
-                for dx in range(gsdx,0,-1):
+        for gsdx in range(1,self.wc): # gsdx is which diagnal were doing 
+            for sdy in range(0,self.wc-gsdx): # the value of y in the diagnal 
+                sdx = gsdx+sdy # sdx is the value of x in the diagnal 
+                for dx in range(gsdx,0,-1): # the diff in x for the x area we are checking for teh first non-terminal
                     # dy is the compliment 
-                    dy = (gsdx+1)-dx
+                    dy = (gsdx+1)-dx # the diff in y for the y area we are checking 
+
+                    # gets every of first and second non-terminals 
                     for combo,fw,i_f,sw,i_s in Table.__make_strings(self.table[sdy][sdx-dx], self.table[sdy+dy][sdx]): 
                         self.table[sdy][sdx] += map(
                             lambda val: (val,(sdy,sdx-dx,fw,i_f), (sdy+dy,sdx,sw,i_s)) # adds backpointers
@@ -66,18 +67,20 @@ class Table:
 
         newline = '\n'
 
-        def __make_bracket(ty:int,tx:int,tz:int,tab_amount:int = 1) -> str:
-            if not tree_mode:
+        def __make_bracket(ty:int,tx:int,tz:int,tm:bool = False,tab_amount:int = 1) -> str:
+            if not tm:
                 tab_amount = 0
 
             if ty == tx:
                 return f"{' '*tab_amount}[{self.table[ty][tx][tz]} {self.words[ty]}]"
             (name,f,s) = self.table[ty][tx][tz]
-            return f"{' '*tab_amount}[{name}{newline if tree_mode else ' '}{__make_bracket(f[0],f[1],f[3],tab_amount+1)}{newline if tree_mode else ' '}{__make_bracket(s[0],s[1],s[3],tab_amount+1)}{newline + (' '*tab_amount) if tree_mode else ''}]"
+            return f"{' '*tab_amount}[{name}{newline if tm else ' '}{__make_bracket(f[0],f[1],f[3],tm,tab_amount+1)}{newline if tm else ' '}{__make_bracket(s[0],s[1],s[3],tm,tab_amount+1)}{newline + (' '*tab_amount) if tm else ''}]"
 
         for parse_count,(_,first,second) in enumerate(S_arr):
             print(f"Valid parse #{parse_count+1}:")
-            print(f"[S{newline if tree_mode else ' '}{__make_bracket(first[0],first[1],first[3])}{newline if tree_mode else ' '}{__make_bracket(second[0],second[1],second[3])}{newline if tree_mode else ''}]")
+            print(f"[S {__make_bracket(first[0],first[1],first[3],False)} {__make_bracket(second[0],second[1],second[3],False)}]")
+            if tree_mode:
+                print(f"[S{newline}{__make_bracket(first[0],first[1],first[3],True)}{newline}{__make_bracket(second[0],second[1],second[3],True)}{newline}]")
 
     @staticmethod 
     def __make_strings(first,second):
@@ -101,9 +104,7 @@ if __name__ == "__main__":
     sentence = get_input()
     while sentence != "quit":
         t = Table(grammer,sentence)
-        if val:
-            t.outputPermutations(True)
-        t.outputPermutations()
+        t.outputPermutations(True)
         sentence = get_input()
     print("Goodbye!")
 
