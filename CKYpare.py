@@ -3,7 +3,7 @@
 from collections import defaultdict
 from nltk.tokenize import word_tokenize
 from nltk import download as n_download
-n_download("punkt")
+n_download("punkt",quiet=True)
 
 class Grammer: 
     """ This is a class that represents a grammar from a .CNF """
