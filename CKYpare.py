@@ -111,7 +111,7 @@ if __name__ == "__main__":
     sentence = get_input()
     while sentence != "quit":
         t = Table(grammer,sentence)
-        t.outputPermutations(True)
+        t.outputPermutations(val)
         sentence = get_input()
     print("Goodbye!")
 
