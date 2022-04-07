@@ -66,16 +66,15 @@ class Table:
             return
 
         newline = '\n'
-        print(f"Number of valid parses: {len(S_arr)}")
 
         def __make_bracket(ty:int,tx:int,tz:int,tm:bool = False,tab_amount:int = 1) -> str:
             if not tm:
                 tab_amount = 0
 
             if ty == tx:
-                return f"{' '*tab_amount}[{self.table[ty][tx][tz]} {self.words[ty]}]"
+                return f"{'  '*tab_amount}[{self.table[ty][tx][tz]} {self.words[ty]}]"
             (name,f,s) = self.table[ty][tx][tz]
-            return f"{' '*tab_amount}[{name}{newline if tm else ' '}{__make_bracket(f[0],f[1],f[3],tm,tab_amount+1)}{newline if tm else ' '}{__make_bracket(s[0],s[1],s[3],tm,tab_amount+1)}{newline + (' '*tab_amount) if tm else ''}]"
+            return f"{'  '*tab_amount}[{name}{newline if tm else ' '}{__make_bracket(f[0],f[1],f[3],tm,tab_amount+1)}{newline if tm else ' '}{__make_bracket(s[0],s[1],s[3],tm,tab_amount+1)}{newline + ('  '*tab_amount) if tm else ''}]"
 
         for parse_count,x in enumerate(S_arr):
             if not isinstance(x,tuple):
@@ -88,6 +87,9 @@ class Table:
             print(f"[S {__make_bracket(first[0],first[1],first[3],False)} {__make_bracket(second[0],second[1],second[3],False)}]")
             if tree_mode:
                 print(f"[S{newline}{__make_bracket(first[0],first[1],first[3],True)}{newline}{__make_bracket(second[0],second[1],second[3],True)}{newline}]")
+
+        print(f"Number of valid parses: {len(S_arr)}")
+
 
     @staticmethod 
     def __make_strings(first,second):
